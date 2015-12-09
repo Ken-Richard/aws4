@@ -14,6 +14,7 @@ module AWS4
       @access_key = config[:access_key] || config["access_key"]
       @secret_key = config[:secret_key] || config["secret_key"]
       @region = config[:region] || config["region"]
+      @service = config[:service]
     end
 
     def sign(method, uri, headers, body, debug = false)
@@ -21,7 +22,7 @@ module AWS4
       @uri = uri
       @headers = headers
       @body = body
-      @service = @uri.host.split(".", 2)[0]
+      @service ||= @uri.host.split(".", 2)[0]
       date_header = headers["Date"] || headers["DATE"] || headers["date"]
       @date = (date_header ? Time.parse(date_header) : Time.now).utc.strftime(RFC8601BASIC)
       dump if debug
